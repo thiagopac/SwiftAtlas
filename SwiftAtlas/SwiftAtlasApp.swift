@@ -12,7 +12,7 @@ import SwiftUI
 struct SwiftAtlasApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
         }
     }
 }
