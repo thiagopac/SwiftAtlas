@@ -1,36 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25D2128" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="Category" representedClassName="Category" syncable="YES">
+    <entity name="CategoryEntity" representedClassName=".CategoryEntity" syncable="YES">
+        <attribute name="icon" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="slug" attributeType="String"/>
-        <relationship name="topics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Topic" inverseName="category" inverseEntity="Topic"/>
+        <relationship name="topics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TopicEntity" inverseName="category" inverseEntity="TopicEntity"/>
+        <fetchIndex name="idIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="orderIndex">
+            <fetchIndexElement property="order" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
-    <entity name="DocumentationLink" representedClassName="DocumentationLink" syncable="YES" codeGenerationType="class">
-        <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="url" optional="YES" attributeType="String"/>
-        <relationship name="topic" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Topic" inverseName="documentationLinks" inverseEntity="Topic"/>
+    <entity name="DocumentationLinkEntity" representedClassName=".DocumentationLinkEntity" syncable="YES">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="url" attributeType="String"/>
+        <relationship name="topic" maxCount="1" deletionRule="Nullify" destinationEntity="TopicEntity" inverseName="documentationLinks" inverseEntity="TopicEntity"/>
+        <fetchIndex name="idIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
-    <entity name="Snippet" representedClassName="Snippet" syncable="YES" codeGenerationType="class">
+    <entity name="SnippetEntity" representedClassName=".SnippetEntity" syncable="YES">
         <attribute name="code" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="language" attributeType="String"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
-        <relationship name="topic" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Topic" inverseName="snippets" inverseEntity="Topic"/>
+        <relationship name="topic" maxCount="1" deletionRule="Nullify" destinationEntity="TopicEntity" inverseName="snippets" inverseEntity="TopicEntity"/>
+        <fetchIndex name="idIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="orderIndex">
+            <fetchIndexElement property="order" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
-    <entity name="Topic" representedClassName="Topic" syncable="YES" codeGenerationType="class">
+    <entity name="TopicEntity" representedClassName=".TopicEntity" syncable="YES">
+        <attribute name="icon" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="platformAvailability" attributeType="String"/>
         <attribute name="slug" attributeType="String"/>
         <attribute name="summary" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="topics" inverseEntity="Category"/>
-        <relationship name="documentationLinks" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="DocumentationLink" inverseName="topic" inverseEntity="DocumentationLink"/>
-        <relationship name="snippets" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Snippet" inverseName="topic" inverseEntity="Snippet"/>
+        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="CategoryEntity" inverseName="topics" inverseEntity="CategoryEntity"/>
+        <relationship name="documentationLinks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentationLinkEntity" inverseName="topic" inverseEntity="DocumentationLinkEntity"/>
+        <relationship name="snippets" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SnippetEntity" inverseName="topic" inverseEntity="SnippetEntity"/>
+        <fetchIndex name="idIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="orderIndex">
+            <fetchIndexElement property="order" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
 </model>

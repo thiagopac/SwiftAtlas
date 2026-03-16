@@ -10,9 +10,18 @@ import SwiftUI
 
 @main
 struct SwiftAtlasApp: App {
+
+    let persistence = CoreDataStack.shared
+
     var body: some Scene {
         WindowGroup {
-//            ContentView()
+            CategoryListScreen()
+                .environment(\.managedObjectContext, persistence.viewContext)
+                .task {
+                    await ContentSyncService.sync(
+                        context: persistence.viewContext
+                    )
+                }
         }
     }
 }
