@@ -20,30 +20,24 @@ struct CategoryListScreen: View {
     ]
     
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 16) {
                 
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        
-                        ForEach(categories) { category in
-                            
-                            NavigationLink {
-                                TopicListScreen(category: category)
-                            } label: {
-                                CategoryCellView(category: category)
-                            }
-                            .buttonStyle(.plain)
-                        }
+                ForEach(categories) { category in
+                    
+                    NavigationLink {
+                        TopicListScreen(category: category)
+                    } label: {
+                        CategoryCellView(category: category)
                     }
-                    .padding()
+                    .buttonStyle(.plain)
                 }
             }
+            .padding()
         }
         .toolbar {
+            GlobalToolbarContent()
+
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 8) {
                     Image(systemName: "swift")
@@ -53,14 +47,7 @@ struct CategoryListScreen: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .fontDesign(.rounded)
-                        .foregroundColor(.primary)
                 }
-            }
-
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button { } label: { Image(systemName: "moon") }
-                Button { } label: { Image(systemName: "star") }
-                Button { } label: { Image(systemName: "magnifyingglass") }
             }
         }
     }

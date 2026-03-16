@@ -58,9 +58,12 @@ struct TopicDetailScreen: View {
                 
             }
             .padding()
-            
+
         }
         .navigationTitle(topic.title)
+        .toolbar {
+            GlobalToolbarContent()
+        }
     }
 }
 

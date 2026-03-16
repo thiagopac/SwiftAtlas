@@ -15,7 +15,7 @@ struct SwiftAtlasApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CategoryListScreen()
+            RootView()
                 .environment(\.managedObjectContext, persistence.viewContext)
                 .task {
                     await ContentSyncService.sync(

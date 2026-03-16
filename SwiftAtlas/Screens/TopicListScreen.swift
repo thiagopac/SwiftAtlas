@@ -41,6 +41,9 @@ struct TopicListScreen: View {
 
         }
         .navigationTitle(category.name)
+        .toolbar {
+            GlobalToolbarContent()
+        }
     }
 }
 
