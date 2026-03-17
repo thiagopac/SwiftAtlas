@@ -10,22 +10,47 @@ import SwiftUI
 import CoreData
 
 struct RootView: View {
+    
+    @AppStorage("isDarkMode") private var isDarkMode = false
 
     var body: some View {
 
         NavigationStack {
             CategoryListScreen()
         }
+        .preferredColorScheme(isDarkMode ? .dark : .light)
     }
 }
 
 struct GlobalToolbarContent: ToolbarContent {
+    
+    @AppStorage("isDarkMode") private var isDarkMode = false
 
     var body: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
-            Button { } label: { Image(systemName: "moon") }
+            Button {
+                isDarkMode.toggle()
+            } label: {
+                Image(systemName: isDarkMode ? "sun.max" : "moon")
+            }
             Button { } label: { Image(systemName: "star") }
             Button { } label: { Image(systemName: "magnifyingglass") }
+        }
+    }
+}
+
+extension String {
+
+    var atlasAccentColor: Color {
+        switch self.lowercased() {
+        case "swift":
+            return .orange
+        case "combine":
+            return .red
+        case "uikit":
+            return .green
+        default:
+            return .blue
         }
     }
 }

@@ -11,6 +11,8 @@ import CoreData
 
 struct TopicListScreen: View {
     
+    @AppStorage("isDarkMode") private var isDarkMode = false
+    
     @FetchRequest private var topics: FetchedResults<TopicEntity>
 
     let category: CategoryEntity
@@ -34,16 +36,44 @@ struct TopicListScreen: View {
             } label: {
                 HStack {
                     Image(systemName: topic.icon)
-                    Text(topic.title)
-                }
-                
-            }
+                        .foregroundStyle(accentColor)
 
+                    Text(topic.title)
+                        .foregroundStyle(.primary)
+                }
+                .padding(.vertical, 6)
+            }
+            .listRowBackground(Color(.secondarySystemBackground))
         }
+        .scrollContentBackground(.hidden)
+        .background(listBackground)
         .navigationTitle(category.name)
         .toolbar {
             GlobalToolbarContent()
         }
+    }
+    
+    private var accentColor: Color {
+        category.slug.atlasAccentColor
+    }
+    
+    private var listBackground: some View {
+        LinearGradient(
+            colors: isDarkMode
+                ? [
+                    accentColor.opacity(0.16),
+                    Color(red: 0.07, green: 0.08, blue: 0.11),
+                    Color.black
+                ]
+                : [
+                    accentColor.opacity(0.10),
+                    Color(.systemBackground),
+                    Color(.systemGroupedBackground)
+                ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
     }
 }
 

@@ -11,6 +11,8 @@ import CoreData
 
 struct CategoryListScreen: View {
     
+    @AppStorage("isDarkMode") private var isDarkMode = false
+    
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "order", ascending: true)])
     private var categories: FetchedResults<CategoryEntity>
     
@@ -35,6 +37,7 @@ struct CategoryListScreen: View {
             }
             .padding()
         }
+        .background(backgroundGradient)
         .toolbar {
             GlobalToolbarContent()
 
@@ -50,6 +53,25 @@ struct CategoryListScreen: View {
                 }
             }
         }
+    }
+    
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: isDarkMode
+                ? [
+                    Color(red: 0.07, green: 0.08, blue: 0.11),
+                    Color(red: 0.10, green: 0.11, blue: 0.16),
+                    Color.black
+                ]
+                : [
+                    Color.orange.opacity(0.12),
+                    Color(.systemBackground),
+                    Color(.systemGroupedBackground)
+                ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
     }
 }
 
@@ -85,9 +107,13 @@ struct CategoryCellView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(.background)
+                .fill(Color(.secondarySystemBackground))
         )
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.primary.opacity(0.05), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
     }
 }
 
