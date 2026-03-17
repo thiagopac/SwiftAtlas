@@ -16,7 +16,7 @@ struct CategoryListScreen: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "order", ascending: true)])
     private var categories: FetchedResults<CategoryEntity>
     
-    let columns = [
+    private let columns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
@@ -56,26 +56,14 @@ struct CategoryListScreen: View {
     }
     
     private var backgroundGradient: some View {
-        LinearGradient(
-            colors: isDarkMode
-                ? [
-                    Color(red: 0.07, green: 0.08, blue: 0.11),
-                    Color(red: 0.10, green: 0.11, blue: 0.16),
-                    Color.black
-                ]
-                : [
-                    Color.orange.opacity(0.12),
-                    Color(.systemBackground),
-                    Color(.systemGroupedBackground)
-                ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        (isDarkMode ? Color(red: 0.03, green: 0.04, blue: 0.06) : Color(.systemGroupedBackground))
         .ignoresSafeArea()
     }
 }
 
 struct CategoryCellView: View {
+    
+    @AppStorage("isDarkMode") private var isDarkMode = false
     
     let category: CategoryEntity
     
@@ -86,7 +74,7 @@ struct CategoryCellView: View {
                 Image(category.icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 55, height: 55)
+                    .frame(width: 80, height: 80)
                 
                 Spacer()
             }
@@ -103,17 +91,24 @@ struct CategoryCellView: View {
             }
         }
         .padding(16)
-        .frame(height: 120)
         .frame(maxWidth: .infinity)
+        .aspectRatio(1, contentMode: .fit)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.secondarySystemBackground))
+                .fill(cardBackgroundColor)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.primary.opacity(0.05), lineWidth: 1)
+                .stroke(borderColor, lineWidth: 1)
         )
-        .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+    }
+    
+    private var cardBackgroundColor: Color {
+        isDarkMode ? Color(red: 0.10, green: 0.11, blue: 0.14) : Color.white
+    }
+    
+    private var borderColor: Color {
+        isDarkMode ? Color.white.opacity(0.06) : Color.black.opacity(0.05)
     }
 }
 

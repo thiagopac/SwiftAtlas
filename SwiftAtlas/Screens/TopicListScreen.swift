@@ -43,13 +43,25 @@ struct TopicListScreen: View {
                 }
                 .padding(.vertical, 6)
             }
-            .listRowBackground(Color(.secondarySystemBackground))
+            .listRowBackground(rowBackgroundColor)
         }
         .scrollContentBackground(.hidden)
         .background(listBackground)
-        .navigationTitle(category.name)
         .toolbar {
             GlobalToolbarContent()
+
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 8) {
+                    Image(category.icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+
+                    Text(category.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                }
+            }
         }
     }
     
@@ -58,22 +70,12 @@ struct TopicListScreen: View {
     }
     
     private var listBackground: some View {
-        LinearGradient(
-            colors: isDarkMode
-                ? [
-                    accentColor.opacity(0.16),
-                    Color(red: 0.07, green: 0.08, blue: 0.11),
-                    Color.black
-                ]
-                : [
-                    accentColor.opacity(0.10),
-                    Color(.systemBackground),
-                    Color(.systemGroupedBackground)
-                ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        (isDarkMode ? Color(red: 0.03, green: 0.04, blue: 0.06) : Color(.systemGroupedBackground))
         .ignoresSafeArea()
+    }
+    
+    private var rowBackgroundColor: Color {
+        isDarkMode ? Color(red: 0.09, green: 0.10, blue: 0.13) : Color.white
     }
 }
 

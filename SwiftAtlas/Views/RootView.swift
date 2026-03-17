@@ -8,6 +8,7 @@
 
 import SwiftUI
 import CoreData
+import UIKit
 
 struct RootView: View {
     
@@ -44,13 +45,29 @@ extension String {
     var atlasAccentColor: Color {
         switch self.lowercased() {
         case "swift":
-            return .orange
+            return Color(red: 1.00, green: 0.46, blue: 0.18)
         case "combine":
-            return .red
+            return Color(
+                uiColor: UIColor { traitCollection in
+                    if traitCollection.userInterfaceStyle == .dark {
+                        return UIColor(red: 0.92, green: 0.46, blue: 0.35, alpha: 1)
+                    }
+
+                    return UIColor(red: 0.79, green: 0.31, blue: 0.23, alpha: 1)
+                }
+            )
         case "uikit":
-            return .green
+            return Color(
+                uiColor: UIColor { traitCollection in
+                    if traitCollection.userInterfaceStyle == .dark {
+                        return UIColor(red: 0.63, green: 0.87, blue: 0.12, alpha: 1)
+                    }
+
+                    return UIColor(red: 0.48, green: 0.67, blue: 0.12, alpha: 1)
+                }
+            )
         default:
-            return .blue
+            return Color(red: 0.12, green: 0.76, blue: 0.93)
         }
     }
 }
