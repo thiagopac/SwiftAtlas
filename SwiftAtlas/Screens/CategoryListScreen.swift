@@ -56,15 +56,73 @@ struct CategoryListScreen: View {
     }
     
     private var backgroundGradient: some View {
-        (isDarkMode ? Color(red: 0.03, green: 0.04, blue: 0.06) : Color(.systemGroupedBackground))
+        ZStack {
+            baseBackground
+
+            RadialGradient(
+                colors: [
+                    Color(red: 0.09, green: 0.56, blue: 0.90).opacity(isDarkMode ? 0.55 : 0.35),
+                    .clear
+                ],
+                center: .topLeading,
+                startRadius: 40,
+                endRadius: 420
+            )
+
+            RadialGradient(
+                colors: [
+                    Color(red: 1.00, green: 0.46, blue: 0.18).opacity(isDarkMode ? 0.50 : 0.30),
+                    .clear
+                ],
+                center: .bottomLeading,
+                startRadius: 60,
+                endRadius: 420
+            )
+
+            RadialGradient(
+                colors: [
+                    Color(red: 0.79, green: 0.31, blue: 0.23).opacity(isDarkMode ? 0.40 : 0.24),
+                    .clear
+                ],
+                center: .topTrailing,
+                startRadius: 50,
+                endRadius: 360
+            )
+
+            RadialGradient(
+                colors: [
+                    Color(red: 0.48, green: 0.67, blue: 0.12).opacity(isDarkMode ? 0.42 : 0.24),
+                    .clear
+                ],
+                center: .bottomTrailing,
+                startRadius: 50,
+                endRadius: 360
+            )
+        }
         .ignoresSafeArea()
+    }
+
+    private var baseBackground: some View {
+        LinearGradient(
+            colors: isDarkMode
+                ? [
+                    Color(red: 0.03, green: 0.04, blue: 0.08),
+                    Color(red: 0.06, green: 0.05, blue: 0.10),
+                    Color.black
+                ]
+                : [
+                    Color(red: 0.95, green: 0.97, blue: 1.00),
+                    Color(red: 0.98, green: 0.97, blue: 0.95),
+                    Color(.systemGroupedBackground)
+                ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
 struct CategoryCellView: View {
-    
-    @AppStorage("isDarkMode") private var isDarkMode = false
-    
+
     let category: CategoryEntity
     
     var body: some View {
@@ -93,22 +151,10 @@ struct CategoryCellView: View {
         .padding(16)
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(cardBackgroundColor)
+        .atlasGlassSurface(
+            .surface,
+            in: .rect(cornerRadius: 24)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(borderColor, lineWidth: 1)
-        )
-    }
-    
-    private var cardBackgroundColor: Color {
-        isDarkMode ? Color(red: 0.10, green: 0.11, blue: 0.14) : Color.white
-    }
-    
-    private var borderColor: Color {
-        isDarkMode ? Color.white.opacity(0.06) : Color.black.opacity(0.05)
     }
 }
 

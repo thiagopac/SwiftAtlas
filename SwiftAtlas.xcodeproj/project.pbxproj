@@ -201,13 +201,13 @@
 			);
 			mainGroup = AF27752D2F61BC4100F6DFC3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B3A100022D7A000100000001 /* XCRemoteSwiftPackageReference "Highlightr" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AF2775372F61BC4100F6DFC3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			packageReferences = (
-				B3A100022D7A000100000001 /* XCRemoteSwiftPackageReference "Highlightr" */,
-			);
 			targets = (
 				AF2775352F61BC4100F6DFC3 /* SwiftAtlas */,
 				AF2775422F61BC4400F6DFC3 /* SwiftAtlasTests */,
@@ -276,17 +276,6 @@
 			targetProxy = AF27754E2F61BC4500F6DFC3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		B3A100022D7A000100000001 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/raspu/Highlightr";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCBuildConfiguration section */
 		AF2775552F61BC4500F6DFC3 /* Debug */ = {
@@ -598,6 +587,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B3A100022D7A000100000001 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raspu/Highlightr";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		B3A100032D7A000100000001 /* Highlightr */ = {

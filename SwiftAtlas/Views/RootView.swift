@@ -10,6 +10,12 @@ import SwiftUI
 import CoreData
 import UIKit
 
+enum AtlasGlassLevel {
+    case chrome
+    case surface
+    case element
+}
+
 struct RootView: View {
     
     @AppStorage("isDarkMode") private var isDarkMode = false
@@ -67,8 +73,80 @@ extension String {
                 }
             )
         default:
-            return Color(red: 0.12, green: 0.76, blue: 0.93)
+            return Color(
+                uiColor: UIColor { traitCollection in
+                    if traitCollection.userInterfaceStyle == .dark {
+                        return UIColor(red: 0.15, green: 0.67, blue: 0.94, alpha: 1)
+                    }
+
+                    return UIColor(red: 0.09, green: 0.56, blue: 0.90, alpha: 1)
+                }
+            )
         }
+    }
+}
+
+struct AtlasGlassSurfaceModifier<S: Shape>: ViewModifier {
+
+    let level: AtlasGlassLevel
+    let shape: S
+
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+    func body(content: Content) -> some View {
+        if reduceTransparency {
+            content
+                .contentShape(shape)
+                .background {
+                    shape.fill(Color(.secondarySystemBackground))
+                }
+                .overlay {
+                    shape
+                        .stroke(strokeColor, lineWidth: 1)
+                }
+                .shadow(color: Color.black.opacity(0.16), radius: 18, x: 0, y: 8)
+        } else {
+            content
+                .contentShape(shape)
+                .glassEffect(glass, in: shape)
+                .overlay {
+                    shape
+                        .stroke(strokeColor, lineWidth: 1)
+                }
+                .shadow(color: Color.black.opacity(0.16), radius: 18, x: 0, y: 8)
+        }
+    }
+
+    private var glass: Glass {
+        switch level {
+        case .chrome:
+            return .regular.interactive()
+        case .surface:
+            return .regular
+        case .element:
+            return .regular.interactive()
+        }
+    }
+
+    private var strokeColor: Color {
+        switch level {
+        case .chrome:
+            return Color.white.opacity(0.34)
+        case .surface:
+            return Color.white.opacity(0.22)
+        case .element:
+            return Color.white.opacity(0.28)
+        }
+    }
+}
+
+extension View {
+
+    func atlasGlassSurface<S: Shape>(
+        _ level: AtlasGlassLevel = .surface,
+        in shape: S
+    ) -> some View {
+        modifier(AtlasGlassSurfaceModifier(level: level, shape: shape))
     }
 }
 

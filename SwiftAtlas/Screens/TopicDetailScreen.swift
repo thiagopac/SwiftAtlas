@@ -30,69 +30,71 @@ struct TopicDetailScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
-                headerCard
+                GlassEffectContainer(spacing: 24) {
+                    headerCard
+                }
                 summaryCard
 
                 if !sortedSnippets.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        sectionTitle("Code Snippets", systemImage: "curlybraces.square")
+                    GlassEffectContainer(spacing: 20) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionTitle("Code Snippets", systemImage: "curlybraces.square")
 
-                        ForEach(sortedSnippets) { snippet in
-                            CodeSnippetCard(
-                                snippet: snippet,
-                                accentColor: accentColor
-                            )
+                            ForEach(sortedSnippets) { snippet in
+                                CodeSnippetCard(
+                                    snippet: snippet,
+                                    accentColor: accentColor
+                                )
+                            }
                         }
                     }
                 }
 
                 if !sortedDocumentationLinks.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        sectionTitle("Documentation", systemImage: "book.pages")
+                    GlassEffectContainer(spacing: 18) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionTitle("Documentation", systemImage: "book.pages")
 
-                        ForEach(sortedDocumentationLinks) { documentationLink in
-                            if let url = URL(string: documentationLink.url) {
-                                Link(destination: url) {
-                                    HStack(alignment: .top, spacing: 10) {
-                                        Image(systemName: "arrow.up.right.square")
-                                            .foregroundStyle(accentColor)
-                                            .padding(.top, 2)
+                            ForEach(sortedDocumentationLinks) { documentationLink in
+                                if let url = URL(string: documentationLink.url) {
+                                    Link(destination: url) {
+                                        HStack(alignment: .top, spacing: 10) {
+                                            Image(systemName: "arrow.up.right.square")
+                                                .foregroundStyle(accentColor)
+                                                .padding(.top, 2)
 
-                                        VStack(alignment: .leading, spacing: 6) {
-                                            Text(documentationLink.title)
-                                                .font(.headline)
-                                                .foregroundStyle(.primary)
+                                            VStack(alignment: .leading, spacing: 6) {
+                                                Text(documentationLink.title)
+                                                    .font(.headline)
+                                                    .foregroundStyle(.primary)
 
-                                            Text(documentationLink.url)
-                                                .font(.footnote)
-                                                .foregroundStyle(.secondary)
-                                                .lineLimit(2)
+                                                Text(documentationLink.url)
+                                                    .font(.footnote)
+                                                    .foregroundStyle(.secondary)
+                                                    .lineLimit(2)
+                                            }
+
+                                            Spacer(minLength: 0)
                                         }
-
-                                        Spacer(minLength: 0)
+                                        .padding(16)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .atlasGlassSurface(
+                                            .surface,
+                                            in: .rect(cornerRadius: 18)
+                                        )
                                     }
-                                    .padding(16)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                            .fill(Color(.systemBackground))
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                            .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                                    )
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
+                        .padding(.top, 10)
                     }
-                    .padding(.top, 10)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
         }
-        .background(Color(.systemBackground).ignoresSafeArea())
+        .background(detailBackground.ignoresSafeArea())
         .navigationTitle(topic.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -136,13 +138,9 @@ struct TopicDetailScreen: View {
         }
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(headerBackgroundColor)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(Color.primary.opacity(0.05), lineWidth: 1)
+        .atlasGlassSurface(
+            .surface,
+            in: .rect(cornerRadius: 28)
         )
     }
 
@@ -172,8 +170,22 @@ struct TopicDetailScreen: View {
         topic.category.slug.atlasAccentColor
     }
     
-    private var headerBackgroundColor: Color {
-        isDarkMode ? Color(.secondarySystemBackground) : Color(.systemGray6)
+    private var detailBackground: some View {
+        LinearGradient(
+            colors: isDarkMode
+                ? [
+                    Color(red: 0.04, green: 0.05, blue: 0.07),
+                    accentColor.opacity(0.09),
+                    Color(red: 0.08, green: 0.09, blue: 0.12)
+                ]
+                : [
+                    Color(.systemBackground),
+                    accentColor.opacity(0.05),
+                    Color(.systemGroupedBackground)
+                ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
@@ -231,14 +243,9 @@ struct CodeSnippetCard: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(snippetBackgroundColor)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.primary.opacity(0.05), lineWidth: 1)
+        .atlasGlassSurface(
+            .surface,
+            in: .rect(cornerRadius: 24)
         )
     }
 
@@ -273,10 +280,6 @@ struct CodeSnippetCard: View {
     
     private var copyButtonForeground: Color {
         isDarkMode ? .white : accentColor
-    }
-    
-    private var snippetBackgroundColor: Color {
-        isDarkMode ? Color(.secondarySystemBackground) : Color(.systemGray6)
     }
 }
 

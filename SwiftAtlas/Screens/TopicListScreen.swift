@@ -70,7 +70,21 @@ struct TopicListScreen: View {
     }
     
     private var listBackground: some View {
-        (isDarkMode ? Color(red: 0.03, green: 0.04, blue: 0.06) : Color(.systemGroupedBackground))
+        LinearGradient(
+            colors: isDarkMode
+                ? [
+                    Color(red: 0.04, green: 0.05, blue: 0.07),
+                    accentColor.opacity(0.10),
+                    Color(red: 0.08, green: 0.09, blue: 0.12)
+                ]
+                : [
+                    Color(.systemGroupedBackground),
+                    accentColor.opacity(0.06),
+                    Color(.secondarySystemGroupedBackground)
+                ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
         .ignoresSafeArea()
     }
     
