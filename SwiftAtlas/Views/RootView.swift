@@ -17,21 +17,29 @@ enum AtlasGlassLevel {
 }
 
 struct RootView: View {
-    
+
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @Environment(BookmarkService.self) private var bookmarks
 
     var body: some View {
+        @Bindable var bookmarks = bookmarks
 
         NavigationStack {
             CategoryListScreen()
         }
         .preferredColorScheme(isDarkMode ? .dark : .light)
+        .sheet(isPresented: $bookmarks.showFavorites) {
+            FavoritesScreen()
+                .environment(\.managedObjectContext, CoreDataStack.shared.viewContext)
+                .environment(bookmarks)
+        }
     }
 }
 
 struct GlobalToolbarContent: ToolbarContent {
 
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @Environment(BookmarkService.self) private var bookmarks
 
     var onSearch: (() -> Void)? = nil
 
@@ -42,7 +50,11 @@ struct GlobalToolbarContent: ToolbarContent {
             } label: {
                 Image(systemName: isDarkMode ? "sun.max" : "moon")
             }
-            Button { } label: { Image(systemName: "star") }
+            Button {
+                bookmarks.showFavorites = true
+            } label: {
+                Image(systemName: "star")
+            }
             Button {
                 onSearch?()
             } label: {

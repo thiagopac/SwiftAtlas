@@ -6,8 +6,11 @@ import Highlightr
 struct TopicDetailScreen: View {
 
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @Environment(BookmarkService.self) private var bookmarks
 
     var topic: TopicEntity
+
+    @State private var iconVisible = false
 
     var sortedBlocks: [ContentBlockEntity] {
         let set = topic.blocks ?? []
@@ -85,6 +88,13 @@ struct TopicDetailScreen: View {
             .padding(.vertical, 18)
         }
         .background(detailBackground.ignoresSafeArea())
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                withAnimation {
+                    iconVisible = true
+                }
+            }
+        }
         .navigationTitle(topic.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -99,9 +109,12 @@ struct TopicDetailScreen: View {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .fill(accentColor)
 
-                    Image(systemName: topic.icon)
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundStyle(.white)
+                    if iconVisible {
+                        Image(systemName: topic.icon)
+                            .font(.system(size: 26, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .transition(.symbolEffect(.drawOn))
+                    }
                 }
                 .frame(width: 60, height: 60)
 
@@ -115,6 +128,18 @@ struct TopicDetailScreen: View {
                 }
 
                 Spacer()
+
+                Button {
+                    bookmarks.toggle(topic)
+                } label: {
+                    Image(systemName: bookmarks.isFavorite(topic) ? "star.fill" : "star")
+                        .font(.system(size: 22))
+                        .foregroundStyle(bookmarks.isFavorite(topic) ? .yellow : .secondary)
+                        .contentTransition(.symbolEffect(.replace.upUp))
+                        .symbolEffect(.bounce, value: bookmarks.isFavorite(topic))
+                }
+                .buttonStyle(.plain)
+                .animation(.spring(response: 0.25, dampingFraction: 0.5), value: bookmarks.isFavorite(topic))
             }
 
             HStack(spacing: 10) {
