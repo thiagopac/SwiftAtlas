@@ -30,8 +30,10 @@ struct RootView: View {
 }
 
 struct GlobalToolbarContent: ToolbarContent {
-    
+
     @AppStorage("isDarkMode") private var isDarkMode = false
+
+    var onSearch: (() -> Void)? = nil
 
     var body: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
@@ -41,7 +43,11 @@ struct GlobalToolbarContent: ToolbarContent {
                 Image(systemName: isDarkMode ? "sun.max" : "moon")
             }
             Button { } label: { Image(systemName: "star") }
-            Button { } label: { Image(systemName: "magnifyingglass") }
+            Button {
+                onSearch?()
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
         }
     }
 }

@@ -1,45 +1,45 @@
-//
-//  CategoryListScreen.swift
-//  SwiftAtlas
-//
-//  Created by Thiago Castro on 12/03/26.
-//
-
-
 import SwiftUI
 import CoreData
 
 struct CategoryListScreen: View {
-    
+
     @AppStorage("isDarkMode") private var isDarkMode = false
-    
+
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "order", ascending: true)])
     private var categories: FetchedResults<CategoryEntity>
-    
+
+    @State private var showSearch = false
+
     private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 20),
+        GridItem(.flexible(), spacing: 20)
     ]
-    
+
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                
-                ForEach(categories) { category in
-                    
-                    NavigationLink {
-                        TopicListScreen(category: category)
-                    } label: {
-                        CategoryCellView(category: category)
+        ZStack {
+            background.ignoresSafeArea()
+
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(categories) { category in
+                        NavigationLink {
+                            TopicListScreen(category: category)
+                        } label: {
+                            CategoryCellView(category: category)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 28)
+                .padding(.vertical, 20)
             }
-            .padding()
         }
-        .background(backgroundGradient)
+        .fullScreenCover(isPresented: $showSearch) {
+            SearchScreen()
+                .environment(\.managedObjectContext, CoreDataStack.shared.viewContext)
+        }
         .toolbar {
-            GlobalToolbarContent()
+            GlobalToolbarContent(onSearch: { showSearch = true })
 
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 8) {
@@ -54,107 +54,56 @@ struct CategoryListScreen: View {
             }
         }
     }
-    
-    private var backgroundGradient: some View {
-        ZStack {
-            baseBackground
 
-            RadialGradient(
-                colors: [
-                    Color(red: 0.09, green: 0.56, blue: 0.90).opacity(isDarkMode ? 0.55 : 0.35),
-                    .clear
-                ],
-                center: .topLeading,
-                startRadius: 40,
-                endRadius: 420
-            )
-
-            RadialGradient(
-                colors: [
-                    Color(red: 1.00, green: 0.46, blue: 0.18).opacity(isDarkMode ? 0.50 : 0.30),
-                    .clear
-                ],
-                center: .bottomLeading,
-                startRadius: 60,
-                endRadius: 420
-            )
-
-            RadialGradient(
-                colors: [
-                    Color(red: 0.79, green: 0.31, blue: 0.23).opacity(isDarkMode ? 0.40 : 0.24),
-                    .clear
-                ],
-                center: .topTrailing,
-                startRadius: 50,
-                endRadius: 360
-            )
-
-            RadialGradient(
-                colors: [
-                    Color(red: 0.48, green: 0.67, blue: 0.12).opacity(isDarkMode ? 0.42 : 0.24),
-                    .clear
-                ],
-                center: .bottomTrailing,
-                startRadius: 50,
-                endRadius: 360
-            )
-        }
-        .ignoresSafeArea()
-    }
-
-    private var baseBackground: some View {
-        LinearGradient(
-            colors: isDarkMode
-                ? [
-                    Color(red: 0.03, green: 0.04, blue: 0.08),
-                    Color(red: 0.06, green: 0.05, blue: 0.10),
-                    Color.black
-                ]
-                : [
-                    Color(red: 0.95, green: 0.97, blue: 1.00),
-                    Color(red: 0.98, green: 0.97, blue: 0.95),
-                    Color(.systemGroupedBackground)
-                ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+    private var background: Color {
+        isDarkMode
+            ? Color(red: 0.07, green: 0.07, blue: 0.09)
+            : Color(UIColor.systemGroupedBackground)
     }
 }
 
 struct CategoryCellView: View {
 
     let category: CategoryEntity
-    
+
+    @AppStorage("isDarkMode") private var isDarkMode = false
+
+    private var accentColor: Color {
+        category.slug.atlasAccentColor
+    }
+
     var body: some View {
-        VStack {
-            
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Image(category.icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 80)
-                
+                    .frame(width: 52, height: 52)
+
                 Spacer()
             }
-            
+
             Spacer()
-            
-            HStack {
-                Spacer()
-                
-                Text(category.name)
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
-            }
+
+            Text(category.name)
+                .font(.system(.title3, design: .rounded, weight: .semibold))
+                .foregroundStyle(.primary)
         }
-        .padding(16)
+        .padding(18)
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .atlasGlassSurface(
-            .surface,
-            in: .rect(cornerRadius: 24)
+        .background(cardBackground, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .strokeBorder(accentColor, lineWidth: 1.5)
         )
+        .shadow(color: accentColor.opacity(isDarkMode ? 0.18 : 0.10), radius: 10, x: 0, y: 4)
+    }
+
+    private var cardBackground: some ShapeStyle {
+        isDarkMode
+            ? AnyShapeStyle(Color(red: 0.13, green: 0.13, blue: 0.16))
+            : AnyShapeStyle(Color(UIColor.secondarySystemGroupedBackground))
     }
 }
 
