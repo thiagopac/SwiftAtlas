@@ -1,11 +1,3 @@
-//
-//  TopicEntity.swift
-//  SwiftAtlas
-//
-//  Created by Thiago Castro on 12/03/26.
-//
-
-
 import Foundation
 import CoreData
 
@@ -18,6 +10,6 @@ final class TopicEntity: NSManagedObject, Identifiable {
     @NSManaged var order: Int16
     @NSManaged var platformAvailability: String
     @NSManaged var category: CategoryEntity
+    @NSManaged var blocks: Set<ContentBlockEntity>?
     @NSManaged var documentationLinks: Set<DocumentationLinkEntity>?
-    @NSManaged var snippets: Set<SnippetEntity>?
 }

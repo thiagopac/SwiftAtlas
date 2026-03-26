@@ -1,27 +1,19 @@
-//
-//  TopicDetailScreen.swift
-//  SwiftAtlas
-//
-//  Created by Thiago Castro on 12/03/26.
-//
-
-
 import SwiftUI
 import CoreData
 import UIKit
 import Highlightr
 
 struct TopicDetailScreen: View {
-    
+
     @AppStorage("isDarkMode") private var isDarkMode = false
-    
+
     var topic: TopicEntity
-    
-    var sortedSnippets: [SnippetEntity] {
-        let set = topic.snippets ?? []
+
+    var sortedBlocks: [ContentBlockEntity] {
+        let set = topic.blocks ?? []
         return set.sorted { $0.order < $1.order }
     }
-    
+
     var sortedDocumentationLinks: [DocumentationLinkEntity] {
         let set = topic.documentationLinks ?? []
         return set.sorted { $0.order < $1.order }
@@ -33,18 +25,14 @@ struct TopicDetailScreen: View {
                 GlassEffectContainer(spacing: 24) {
                     headerCard
                 }
-                summaryCard
 
-                if !sortedSnippets.isEmpty {
-                    GlassEffectContainer(spacing: 20) {
-                        VStack(alignment: .leading, spacing: 16) {
-                            sectionTitle("Code Snippets", systemImage: "curlybraces.square")
-
-                            ForEach(sortedSnippets) { snippet in
-                                CodeSnippetCard(
-                                    snippet: snippet,
-                                    accentColor: accentColor
-                                )
+                if !sortedBlocks.isEmpty {
+                    VStack(alignment: .leading, spacing: 20) {
+                        ForEach(sortedBlocks) { block in
+                            if block.type == "text" {
+                                TextBlock(block: block)
+                            } else if block.type == "snippet" {
+                                CodeSnippetCard(block: block, accentColor: accentColor)
                             }
                         }
                     }
@@ -144,18 +132,6 @@ struct TopicDetailScreen: View {
         )
     }
 
-    private var summaryCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionTitle("Overview", systemImage: "text.alignleft")
-
-            Text(topic.summary)
-                .font(.body)
-                .foregroundStyle(.primary)
-                .lineSpacing(5)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
     private func sectionTitle(_ title: String, systemImage: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: systemImage)
@@ -165,11 +141,11 @@ struct TopicDetailScreen: View {
                 .font(.system(.title3, design: .rounded, weight: .bold))
         }
     }
-    
+
     private var accentColor: Color {
         topic.category.slug.atlasAccentColor
     }
-    
+
     private var detailBackground: some View {
         LinearGradient(
             colors: isDarkMode
@@ -189,11 +165,24 @@ struct TopicDetailScreen: View {
     }
 }
 
+struct TextBlock: View {
+
+    let block: ContentBlockEntity
+
+    var body: some View {
+        Text(block.textContent ?? "")
+            .font(.body)
+            .foregroundStyle(.primary)
+            .lineSpacing(5)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 struct CodeSnippetCard: View {
 
-    let snippet: SnippetEntity
+    let block: ContentBlockEntity
     let accentColor: Color
-    
+
     @AppStorage("isDarkMode") private var isDarkMode = false
     @State private var didCopy = false
 
@@ -201,11 +190,11 @@ struct CodeSnippetCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(snippet.title)
+                    Text(block.title ?? "")
                         .font(.headline)
                         .foregroundStyle(isDarkMode ? .white : .primary)
 
-                    Text(snippet.language.uppercased())
+                    Text((block.language ?? "swift").uppercased())
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(isDarkMode ? Color.white.opacity(0.65) : .secondary)
                 }
@@ -213,7 +202,7 @@ struct CodeSnippetCard: View {
                 Spacer()
 
                 Button {
-                    UIPasteboard.general.string = snippet.code
+                    UIPasteboard.general.string = block.code
 
                     withAnimation(.easeInOut(duration: 0.2)) {
                         didCopy = true
@@ -250,8 +239,11 @@ struct CodeSnippetCard: View {
     }
 
     private var highlightedCode: AttributedString {
+        let code = block.code ?? ""
+        let lang = block.language ?? "swift"
+
         let fallback = NSAttributedString(
-            string: snippet.code,
+            string: code,
             attributes: [
                 .font: UIFont.monospacedSystemFont(ofSize: 14, weight: .regular),
                 .foregroundColor: isDarkMode ? UIColor(white: 0.92, alpha: 1) : UIColor.label
@@ -259,7 +251,7 @@ struct CodeSnippetCard: View {
         )
 
         guard
-            let highlighted = highlightr?.highlight(snippet.code, as: snippet.language.lowercased()),
+            let highlighted = highlightr?.highlight(code, as: lang.lowercased()),
             let attributedString = try? AttributedString(highlighted, including: \.uiKit)
         else {
             return AttributedString(fallback)
@@ -267,24 +259,23 @@ struct CodeSnippetCard: View {
 
         return attributedString
     }
-    
+
     private var highlightr: Highlightr? {
         let instance = Highlightr()
         instance?.setTheme(to: isDarkMode ? "atom-one-dark" : "atom-one-light")
         return instance
     }
-    
+
     private var copyButtonBackground: Color {
         isDarkMode ? Color.white.opacity(0.12) : accentColor.opacity(0.12)
     }
-    
+
     private var copyButtonForeground: Color {
         isDarkMode ? .white : accentColor
     }
 }
 
 #Preview {
-
     let stack = CoreDataStack(inMemory: true)
     let context = stack.viewContext
 
@@ -300,35 +291,45 @@ struct CodeSnippetCard: View {
     topic.title = "Text"
     topic.slug = "text"
     topic.icon = "textformat"
-    topic.summary = "Displays one or more lines of read-only text. You can style it, combine modifiers and use it as the base for many SwiftUI interfaces."
+    topic.summary = "Displays read-only text."
     topic.platformAvailability = "iOS 13+"
     topic.order = 1
     topic.category = category
 
-    let snippet = SnippetEntity(context: context)
-    snippet.id = "snippet-text"
-    snippet.title = "Basic usage"
-    snippet.language = "swift"
-    snippet.code = """
-    struct ExampleView: View {
-        var body: some View {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Hello, SwiftUI")
-                    .font(.title)
-                    .foregroundStyle(.blue)
+    let block1 = ContentBlockEntity(context: context)
+    block1.id = "text-intro"
+    block1.type = "text"
+    block1.order = 1
+    block1.textContent = "Text is the most fundamental view in SwiftUI. It renders a read-only string and can be customized with a large set of modifiers."
+    block1.topic = topic
 
-                Text("Readable and flexible UI code.")
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-        }
-    }
-    """
-    snippet.order = 1
-    snippet.topic = topic
+    let block2 = ContentBlockEntity(context: context)
+    block2.id = "text-snippet-basic"
+    block2.type = "snippet"
+    block2.order = 2
+    block2.title = "Basic Text"
+    block2.code = "Text(\"Hello World\")"
+    block2.language = "swift"
+    block2.topic = topic
+
+    let block3 = ContentBlockEntity(context: context)
+    block3.id = "text-mid"
+    block3.type = "text"
+    block3.order = 3
+    block3.textContent = "Modifiers are chained directly onto the view. Font, foreground style, and alignment are the most commonly used."
+    block3.topic = topic
+
+    let block4 = ContentBlockEntity(context: context)
+    block4.id = "text-snippet-style"
+    block4.type = "snippet"
+    block4.order = 4
+    block4.title = "Styled Text"
+    block4.code = "Text(\"Hello World\")\n    .font(.title)\n    .foregroundStyle(.blue)"
+    block4.language = "swift"
+    block4.topic = topic
 
     let link = DocumentationLinkEntity(context: context)
-    link.id = "doc-text"
+    link.id = "text-doc"
     link.title = "Apple Documentation"
     link.url = "https://developer.apple.com/documentation/swiftui/text"
     link.order = 1

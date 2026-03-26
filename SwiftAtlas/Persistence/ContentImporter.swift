@@ -1,20 +1,11 @@
-//
-//  ContentImporter.swift
-//  SwiftAtlas
-//
-//  Created by Thiago Castro on 12/03/26.
-//
-
-
 import Foundation
 import CoreData
 
 struct ContentImporter {
-    
-    static func wipeDatabase(context: NSManagedObjectContext) async throws {
 
+    static func wipeDatabase(context: NSManagedObjectContext) async throws {
         let entities = [
-            "SnippetEntity",
+            "ContentBlockEntity",
             "DocumentationLinkEntity",
             "TopicEntity",
             "CategoryEntity"
@@ -23,17 +14,13 @@ struct ContentImporter {
         for entity in entities {
             let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
             let delete = NSBatchDeleteRequest(fetchRequest: fetch)
-
             try context.execute(delete)
         }
     }
 
     static func importContent(_ content: RemoteContent, context: NSManagedObjectContext) async throws {
-
         for remoteCategory in content.categories {
-
             let category = CategoryEntity(context: context)
-
             category.id = remoteCategory.id
             category.name = remoteCategory.name
             category.icon = remoteCategory.icon
@@ -41,9 +28,7 @@ struct ContentImporter {
             category.order = Int16(remoteCategory.order)
 
             for remoteTopic in remoteCategory.topics {
-
                 let topic = TopicEntity(context: context)
-
                 topic.id = remoteTopic.id
                 topic.title = remoteTopic.title
                 topic.icon = remoteTopic.icon
@@ -51,31 +36,26 @@ struct ContentImporter {
                 topic.summary = remoteTopic.summary
                 topic.platformAvailability = remoteTopic.platformAvailability
                 topic.order = Int16(remoteTopic.order)
-
                 topic.category = category
 
-                for remoteSnippet in remoteTopic.snippets {
-
-                    let snippet = SnippetEntity(context: context)
-
-                    snippet.id = remoteSnippet.id
-                    snippet.title = remoteSnippet.title
-                    snippet.code = remoteSnippet.code
-                    snippet.language = remoteSnippet.language
-                    snippet.order = Int16(remoteSnippet.order)
-
-                    snippet.topic = topic
+                for remoteBlock in remoteTopic.blocks {
+                    let block = ContentBlockEntity(context: context)
+                    block.id = remoteBlock.id
+                    block.type = remoteBlock.type
+                    block.order = Int16(remoteBlock.order)
+                    block.textContent = remoteBlock.textContent
+                    block.code = remoteBlock.code
+                    block.title = remoteBlock.title
+                    block.language = remoteBlock.language
+                    block.topic = topic
                 }
 
                 for remoteDoc in remoteTopic.documentationLinks {
-
                     let doc = DocumentationLinkEntity(context: context)
-
                     doc.id = remoteDoc.id
                     doc.title = remoteDoc.title
                     doc.url = remoteDoc.url
                     doc.order = Int16(remoteDoc.order)
-
                     doc.topic = topic
                 }
             }

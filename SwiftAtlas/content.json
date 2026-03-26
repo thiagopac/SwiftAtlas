@@ -1,0 +1,608 @@
+{
+  "version": 2,
+  "categories": [
+    {
+      "id": "swiftui",
+      "name": "SwiftUI",
+      "slug": "swiftui",
+      "order": 1,
+      "icon": "swiftui-icon",
+      "topics": [
+        {
+          "id": "text",
+          "title": "Text",
+          "slug": "text",
+          "icon": "textformat",
+          "summary": "Displays read-only text.",
+          "platformAvailability": "iOS 13+",
+          "order": 1,
+          "blocks": [
+            {
+              "id": "text-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "Text is the most fundamental view in SwiftUI. It renders a read-only string and can be customized with a large set of modifiers for font, color, alignment, and truncation.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "text-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "Text(\"Hello World\")",
+              "title": "Basic Text",
+              "language": "swift"
+            },
+            {
+              "id": "text-modifiers",
+              "type": "text",
+              "order": 3,
+              "textContent": "Modifiers are chained directly onto the view. The order can matter — for example, applying padding before background changes the layout differently than the reverse.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "text-snippet-style",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "Text(\"Hello World\")\n    .font(.title)\n    .foregroundStyle(.blue)\n    .multilineTextAlignment(.center)",
+              "title": "Styled Text",
+              "language": "swift"
+            },
+            {
+              "id": "text-attributed",
+              "type": "text",
+              "order": 5,
+              "textContent": "You can also use AttributedString to mix different styles within a single Text view, enabling bold, italic, or colored segments inline.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "text-snippet-attributed",
+              "type": "snippet",
+              "order": 6,
+              "textContent": null,
+              "code": "var attributed = AttributedString(\"Hello, \")\nattributed += AttributedString(\"World\")\nattributed.runs[attributed.runs.startIndex].font = .body.bold()\n\nText(attributed)",
+              "title": "Attributed Text",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "text-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/swiftui/text",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "id": "vstack",
+          "title": "VStack",
+          "slug": "vstack",
+          "icon": "square.stack.3d.up",
+          "summary": "A view that arranges its children in a vertical line.",
+          "platformAvailability": "iOS 13+",
+          "order": 2,
+          "blocks": [
+            {
+              "id": "vstack-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "VStack arranges its child views top-to-bottom. It is one of three primary layout containers in SwiftUI, alongside HStack (horizontal) and ZStack (depth).",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "vstack-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "VStack {\n    Text(\"First\")\n    Text(\"Second\")\n}",
+              "title": "Basic VStack",
+              "language": "swift"
+            },
+            {
+              "id": "vstack-spacing-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "The spacing parameter controls the gap between child views. Without it, SwiftUI uses the platform default, which varies by context.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "vstack-snippet-spacing",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "VStack(spacing: 16) {\n    Text(\"Top\")\n    Text(\"Bottom\")\n}",
+              "title": "VStack with Spacing",
+              "language": "swift"
+            },
+            {
+              "id": "vstack-alignment-text",
+              "type": "text",
+              "order": 5,
+              "textContent": "You can set the horizontal alignment of children using the alignment parameter. Options include .leading, .center, and .trailing.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "vstack-snippet-alignment",
+              "type": "snippet",
+              "order": 6,
+              "textContent": null,
+              "code": "VStack(alignment: .leading, spacing: 12) {\n    Text(\"Title\")\n        .font(.headline)\n    Text(\"Subtitle\")\n        .foregroundStyle(.secondary)\n}",
+              "title": "VStack with Alignment",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "vstack-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/swiftui/vstack",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "id": "button",
+          "title": "Button",
+          "slug": "button",
+          "icon": "rectangle.and.hand.point.up.left",
+          "summary": "A control that performs an action when triggered.",
+          "platformAvailability": "iOS 13+",
+          "order": 3,
+          "blocks": [
+            {
+              "id": "button-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "Button is the primary interactive control in SwiftUI. It takes an action closure that runs when the user taps, and a label that defines how it looks.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "button-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "Button(\"Tap me\") {\n    print(\"Button tapped\")\n}",
+              "title": "Basic Button",
+              "language": "swift"
+            },
+            {
+              "id": "button-label-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "For richer buttons, use the label closure to provide a fully custom view. The Label component combines a system image with text and is a common choice.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "button-snippet-label",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "Button {\n    print(\"Pressed\")\n} label: {\n    Label(\"Add Item\", systemImage: \"plus\")\n}",
+              "title": "Button with Label",
+              "language": "swift"
+            },
+            {
+              "id": "button-style-text",
+              "type": "text",
+              "order": 5,
+              "textContent": "Button styles control the visual appearance. SwiftUI provides .bordered, .borderedProminent, .plain, and .borderless out of the box.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "button-snippet-style",
+              "type": "snippet",
+              "order": 6,
+              "textContent": null,
+              "code": "Button(\"Save\") {\n    save()\n}\n.buttonStyle(.borderedProminent)\n.controlSize(.large)",
+              "title": "Styled Button",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "button-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/swiftui/button",
+              "order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "combine",
+      "name": "Combine",
+      "slug": "combine",
+      "icon": "pubsub-icon",
+      "order": 2,
+      "topics": [
+        {
+          "id": "just",
+          "title": "Just",
+          "slug": "just",
+          "icon": "dot.circle",
+          "summary": "A publisher that emits a single value and then finishes.",
+          "platformAvailability": "iOS 13+",
+          "order": 1,
+          "blocks": [
+            {
+              "id": "just-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "Just is the simplest publisher in Combine. It emits exactly one value synchronously and then sends a finished completion event. It never fails.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "just-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "import Combine\n\nlet publisher = Just(\"Hello\")\n\nlet cancellable = publisher\n    .sink { value in\n        print(value)\n    }",
+              "title": "Basic Just Publisher",
+              "language": "swift"
+            },
+            {
+              "id": "just-operators-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "Because Just never fails, its Failure type is Never. This makes it safe to chain operators like map and sink without error handling.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "just-snippet-map",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "Just(42)\n    .map { $0 * 2 }\n    .sink { print($0) }",
+              "title": "Just with map",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "just-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/combine/just",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "id": "map",
+          "title": "map",
+          "slug": "map",
+          "icon": "arrow.triangle.branch",
+          "summary": "Transforms elements from the upstream publisher.",
+          "platformAvailability": "iOS 13+",
+          "order": 2,
+          "blocks": [
+            {
+              "id": "map-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "The map operator transforms each element emitted by an upstream publisher using a closure you provide. It works the same way as Swift's map on sequences.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "map-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "let numbers = [1, 2, 3].publisher\n\nnumbers\n    .map { $0 * 2 }\n    .sink { print($0) }",
+              "title": "Map Operator",
+              "language": "swift"
+            },
+            {
+              "id": "map-chaining-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "Map can be chained with other operators to build transformation pipelines. Each operator receives the output type of the previous one.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "map-snippet-chain",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "[\"hello\", \"world\"].publisher\n    .map { $0.uppercased() }\n    .map { \">> \\($0)\" }\n    .sink { print($0) }",
+              "title": "Chained Map",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "map-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/combine/publishers/map",
+              "order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "swift",
+      "name": "Swift",
+      "slug": "swift",
+      "icon": "swift-icon",
+      "order": 3,
+      "topics": [
+        {
+          "id": "optionals",
+          "title": "Optionals",
+          "slug": "optionals",
+          "icon": "questionmark.circle",
+          "summary": "A type that can hold either a value or no value.",
+          "platformAvailability": "Swift 1+",
+          "order": 1,
+          "blocks": [
+            {
+              "id": "optional-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "Optionals represent the possible absence of a value. A variable of optional type can hold a value or be nil. You must unwrap it before using the value.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "optional-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "var name: String? = \"Thiago\"\n\nif let unwrapped = name {\n    print(unwrapped)\n}",
+              "title": "Basic Optional",
+              "language": "swift"
+            },
+            {
+              "id": "optional-guard-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "guard let is the idiomatic Swift way to unwrap when the value is needed for the rest of the scope. It exits early if the optional is nil, keeping the happy path unindented.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "optional-snippet-guard",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "func greet(name: String?) {\n    guard let name else { return }\n    print(\"Hello, \\(name)\")\n}",
+              "title": "Guard let",
+              "language": "swift"
+            },
+            {
+              "id": "optional-nil-coalescing-text",
+              "type": "text",
+              "order": 5,
+              "textContent": "The nil-coalescing operator ?? provides a default value when the optional is nil, making it useful for concise fallback expressions.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "optional-snippet-nil-coalescing",
+              "type": "snippet",
+              "order": 6,
+              "textContent": null,
+              "code": "let username: String? = nil\nlet display = username ?? \"Guest\"\nprint(display)",
+              "title": "Nil Coalescing",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "optional-doc",
+              "title": "Swift Documentation",
+              "url": "https://docs.swift.org/swift-book/documentation/the-swift-programming-language/thebasics/#Optionals",
+              "order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "uikit",
+      "name": "UIKit",
+      "slug": "uikit",
+      "icon": "uikit-icon",
+      "order": 4,
+      "topics": [
+        {
+          "id": "uiview",
+          "title": "UIView",
+          "slug": "uiview",
+          "icon": "square.on.square",
+          "summary": "The base class for all visual elements in UIKit.",
+          "platformAvailability": "iOS 2+",
+          "order": 1,
+          "blocks": [
+            {
+              "id": "uiview-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "UIView is the base class for every visual element in UIKit. All buttons, labels, images, and containers ultimately inherit from UIView.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uiview-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "let view = UIView()\nview.backgroundColor = .systemBlue\nview.layer.cornerRadius = 12",
+              "title": "Create UIView",
+              "language": "swift"
+            },
+            {
+              "id": "uiview-layout-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "Use Auto Layout constraints or the frame property to position views. translatesAutoresizingMaskIntoConstraints must be set to false when using NSLayoutConstraint.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uiview-snippet-constraints",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "let box = UIView()\nbox.backgroundColor = .systemIndigo\nbox.translatesAutoresizingMaskIntoConstraints = false\nview.addSubview(box)\n\nNSLayoutConstraint.activate([\n    box.centerXAnchor.constraint(equalTo: view.centerXAnchor),\n    box.centerYAnchor.constraint(equalTo: view.centerYAnchor),\n    box.widthAnchor.constraint(equalToConstant: 100),\n    box.heightAnchor.constraint(equalToConstant: 100)\n])",
+              "title": "UIView with Constraints",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "uiview-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/uikit/uiview",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "id": "uilabel",
+          "title": "UILabel",
+          "slug": "uilabel",
+          "icon": "text.alignleft",
+          "summary": "A view that displays one or more lines of text.",
+          "platformAvailability": "iOS 2+",
+          "order": 2,
+          "blocks": [
+            {
+              "id": "uilabel-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "UILabel displays static text. It supports single and multiline content and can be styled with fonts, colors, and alignment. It does not respond to user interaction by default.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uilabel-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "let label = UILabel()\nlabel.text = \"Hello UIKit\"\nlabel.font = .systemFont(ofSize: 18, weight: .semibold)\nlabel.textColor = .label",
+              "title": "Create UILabel",
+              "language": "swift"
+            },
+            {
+              "id": "uilabel-multiline-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "To support multiline text, set numberOfLines to 0. This allows the label to grow vertically based on its content.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uilabel-snippet-multiline",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "let label = UILabel()\nlabel.text = \"This is a longer text that wraps across multiple lines.\"\nlabel.numberOfLines = 0\nlabel.lineBreakMode = .byWordWrapping",
+              "title": "Multiline UILabel",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "uilabel-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/uikit/uilabel",
+              "order": 1
+            }
+          ]
+        },
+        {
+          "id": "uibutton",
+          "title": "UIButton",
+          "slug": "uibutton",
+          "icon": "rectangle.and.hand.point.up.left",
+          "summary": "A control that executes your custom code in response to user interactions.",
+          "platformAvailability": "iOS 2+",
+          "order": 3,
+          "blocks": [
+            {
+              "id": "uibutton-intro",
+              "type": "text",
+              "order": 1,
+              "textContent": "UIButton responds to touch events and calls your action code. The .system type provides the standard blue tappable appearance with automatic highlight feedback.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uibutton-snippet-basic",
+              "type": "snippet",
+              "order": 2,
+              "textContent": null,
+              "code": "let button = UIButton(type: .system)\nbutton.setTitle(\"Tap Me\", for: .normal)\nbutton.setTitleColor(.systemBlue, for: .normal)",
+              "title": "Create UIButton",
+              "language": "swift"
+            },
+            {
+              "id": "uibutton-action-text",
+              "type": "text",
+              "order": 3,
+              "textContent": "Actions are connected using addTarget. In modern UIKit (iOS 14+), you can also use UIAction with a closure for a cleaner approach.",
+              "code": null,
+              "title": null,
+              "language": null
+            },
+            {
+              "id": "uibutton-snippet-action",
+              "type": "snippet",
+              "order": 4,
+              "textContent": null,
+              "code": "let button = UIButton(type: .system)\nbutton.setTitle(\"Save\", for: .normal)\n\nlet action = UIAction { _ in\n    print(\"Button tapped\")\n}\nbutton.addAction(action, for: .touchUpInside)",
+              "title": "UIButton with UIAction",
+              "language": "swift"
+            }
+          ],
+          "documentationLinks": [
+            {
+              "id": "uibutton-doc",
+              "title": "Apple Documentation",
+              "url": "https://developer.apple.com/documentation/uikit/uibutton",
+              "order": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
