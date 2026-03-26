@@ -68,7 +68,9 @@ struct TopicDetailScreen: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .atlasGlassSurface(
                                             .surface,
-                                            in: .rect(cornerRadius: 18)
+                                            in: .rect(cornerRadius: 18),
+                                            shadowRadius: 4,
+                                            shadowOpacity: 0.05
                                         )
                                     }
                                     .buttonStyle(.plain)
@@ -214,14 +216,11 @@ struct CodeSnippetCard: View {
                         }
                     }
                 } label: {
-                    Label(didCopy ? "Copied" : "Copy", systemImage: didCopy ? "checkmark" : "doc.on.doc")
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(copyButtonBackground, in: Capsule())
+                    Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundStyle(copyButtonForeground)
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(copyButtonForeground)
             }
 
             Text(highlightedCode)
@@ -234,7 +233,9 @@ struct CodeSnippetCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .atlasGlassSurface(
             .surface,
-            in: .rect(cornerRadius: 24)
+            in: .rect(cornerRadius: 24),
+            shadowRadius: 4,
+            shadowOpacity: 0.05
         )
     }
 
@@ -266,12 +267,8 @@ struct CodeSnippetCard: View {
         return instance
     }
 
-    private var copyButtonBackground: Color {
-        isDarkMode ? Color.white.opacity(0.12) : accentColor.opacity(0.12)
-    }
-
     private var copyButtonForeground: Color {
-        isDarkMode ? .white : accentColor
+        isDarkMode ? .white.opacity(0.7) : accentColor
     }
 }
 

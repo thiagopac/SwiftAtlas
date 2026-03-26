@@ -90,6 +90,8 @@ struct AtlasGlassSurfaceModifier<S: Shape>: ViewModifier {
 
     let level: AtlasGlassLevel
     let shape: S
+    var shadowRadius: CGFloat = 18
+    var shadowOpacity: Double = 0.16
 
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
@@ -104,7 +106,7 @@ struct AtlasGlassSurfaceModifier<S: Shape>: ViewModifier {
                     shape
                         .stroke(strokeColor, lineWidth: 1)
                 }
-                .shadow(color: Color.black.opacity(0.16), radius: 18, x: 0, y: 8)
+                .shadow(color: Color.black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: shadowRadius / 3)
         } else {
             content
                 .contentShape(shape)
@@ -113,7 +115,7 @@ struct AtlasGlassSurfaceModifier<S: Shape>: ViewModifier {
                     shape
                         .stroke(strokeColor, lineWidth: 1)
                 }
-                .shadow(color: Color.black.opacity(0.16), radius: 18, x: 0, y: 8)
+                .shadow(color: Color.black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: shadowRadius / 3)
         }
     }
 
@@ -144,9 +146,11 @@ extension View {
 
     func atlasGlassSurface<S: Shape>(
         _ level: AtlasGlassLevel = .surface,
-        in shape: S
+        in shape: S,
+        shadowRadius: CGFloat = 18,
+        shadowOpacity: Double = 0.16
     ) -> some View {
-        modifier(AtlasGlassSurfaceModifier(level: level, shape: shape))
+        modifier(AtlasGlassSurfaceModifier(level: level, shape: shape, shadowRadius: shadowRadius, shadowOpacity: shadowOpacity))
     }
 }
 
