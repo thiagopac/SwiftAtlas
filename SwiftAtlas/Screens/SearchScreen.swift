@@ -152,9 +152,19 @@ struct SearchResultRow: View {
                     .foregroundStyle(.primary)
             }
 
+            Text(topic.typeLabel)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(topic.category.slug.atlasAccentColor)
+
             Text(topic.category.name)
                 .font(.caption)
                 .foregroundStyle(topic.category.slug.atlasAccentColor)
+
+            if let sectionTitle = topic.section?.title {
+                Text(sectionTitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
 
             if let preview = matchPreview {
                 Text(preview)
@@ -189,5 +199,18 @@ struct SearchResultRow: View {
         }
 
         return nil
+    }
+}
+
+private extension TopicEntity {
+    var typeLabel: String {
+        switch type {
+        case "propertyWrapper":
+            return "Property Wrapper"
+        case "protocol":
+            return "Protocol"
+        default:
+            return type.prefix(1).uppercased() + type.dropFirst()
+        }
     }
 }

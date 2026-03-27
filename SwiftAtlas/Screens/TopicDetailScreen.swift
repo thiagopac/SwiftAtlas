@@ -104,7 +104,7 @@ struct TopicDetailScreen: View {
 
     private var headerCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .center, spacing: 14) {
+            HStack(alignment: .top, spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .fill(accentColor)
@@ -120,35 +120,43 @@ struct TopicDetailScreen: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(topic.title)
-                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(topic.category.name)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                }
 
-                Spacer()
+                    if let sectionTitle = topic.section?.title {
+                        Text(sectionTitle)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(accentColor)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            HStack(spacing: 8) {
+                badge(topic.platformAvailability, systemImage: "iphone")
+
+                badge(topic.typeLabel)
+
+                Spacer(minLength: 0)
 
                 Button {
                     bookmarks.toggle(topic)
                 } label: {
                     Image(systemName: bookmarks.isFavorite(topic) ? "star.fill" : "star")
-                        .font(.system(size: 22))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(bookmarks.isFavorite(topic) ? .yellow : .secondary)
+                        .frame(width: 34, height: 34)
                         .contentTransition(.symbolEffect(.replace.upUp))
                         .symbolEffect(.bounce, value: bookmarks.isFavorite(topic))
                 }
                 .buttonStyle(.plain)
                 .animation(.spring(response: 0.25, dampingFraction: 0.5), value: bookmarks.isFavorite(topic))
-            }
-
-            HStack(spacing: 10) {
-                Label(topic.platformAvailability, systemImage: "iphone")
-                    .font(.footnote.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(accentColor.opacity(0.12), in: Capsule())
-                    .foregroundStyle(accentColor)
             }
         }
         .padding(22)
@@ -167,6 +175,24 @@ struct TopicDetailScreen: View {
             Text(title)
                 .font(.system(.title3, design: .rounded, weight: .bold))
         }
+    }
+
+    private func badge(_ title: String, systemImage: String? = nil) -> some View {
+        HStack(spacing: 5) {
+            if let systemImage {
+                Image(systemName: systemImage)
+            }
+
+            Text(title)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .font(.caption.weight(.semibold))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(accentColor.opacity(0.12), in: Capsule())
+        .foregroundStyle(accentColor)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private var accentColor: Color {
@@ -189,6 +215,25 @@ struct TopicDetailScreen: View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+    }
+}
+
+private extension TopicEntity {
+    var typeLabel: String {
+        switch type {
+        case "propertyWrapper":
+            return "Property Wrapper"
+        case "protocol":
+            return "Protocol"
+        default:
+            let separated = type.replacingOccurrences(
+                of: "([a-z0-9])([A-Z])",
+                with: "$1 $2",
+                options: .regularExpression
+            )
+
+            return separated.prefix(1).uppercased() + separated.dropFirst()
+        }
     }
 }
 

@@ -13,7 +13,8 @@ struct TopicListScreen: View {
     
     @AppStorage("isDarkMode") private var isDarkMode = false
     
-    @FetchRequest private var topics: FetchedResults<TopicEntity>
+    @FetchRequest private var sections: FetchedResults<TopicSectionEntity>
+    @FetchRequest private var unsectionedTopics: FetchedResults<TopicEntity>
 
     let category: CategoryEntity
 
@@ -21,29 +22,38 @@ struct TopicListScreen: View {
 
         self.category = category
 
-        _topics = FetchRequest(
+        _sections = FetchRequest(
+            sortDescriptors: [
+                NSSortDescriptor(keyPath: \TopicSectionEntity.order, ascending: true)
+            ],
+            predicate: NSPredicate(format: "category.id == %@", category.id)
+        )
+
+        _unsectionedTopics = FetchRequest(
             sortDescriptors: [
                 NSSortDescriptor(keyPath: \TopicEntity.order, ascending: true)
             ],
-            predicate: NSPredicate(format: "category.id == %@", category.id)
+            predicate: NSPredicate(format: "category.id == %@ AND section == nil", category.id)
         )
     }
     
     var body: some View {
-        List(topics) { topic in
-            NavigationLink {
-                TopicDetailScreen(topic: topic)
-            } label: {
-                HStack {
-                    Image(systemName: topic.icon)
-                        .foregroundStyle(accentColor)
-
-                    Text(topic.title)
-                        .foregroundStyle(.primary)
+        List {
+            ForEach(sections) { section in
+                Section(section.title) {
+                    ForEach(sortedTopics(in: section)) { topic in
+                        topicRow(topic)
+                    }
                 }
-                .padding(.vertical, 6)
             }
-            .listRowBackground(rowBackgroundColor)
+
+            if !unsectionedTopics.isEmpty {
+                Section(sections.isEmpty ? "" : "More") {
+                    ForEach(unsectionedTopics) { topic in
+                        topicRow(topic)
+                    }
+                }
+            }
         }
         .scrollContentBackground(.hidden)
         .background(listBackground)
@@ -91,6 +101,38 @@ struct TopicListScreen: View {
     private var rowBackgroundColor: Color {
         isDarkMode ? Color(red: 0.09, green: 0.10, blue: 0.13) : Color.white
     }
+
+    private func sortedTopics(in section: TopicSectionEntity) -> [TopicEntity] {
+        let topics = section.topics ?? []
+        return topics.sorted { $0.order < $1.order }
+    }
+
+    @ViewBuilder
+    private func topicRow(_ topic: TopicEntity) -> some View {
+        NavigationLink {
+            TopicDetailScreen(topic: topic)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: topic.icon)
+                    .frame(width: 20)
+                    .foregroundStyle(accentColor)
+
+                Text(topic.title)
+                    .foregroundStyle(.primary)
+
+                Spacer(minLength: 12)
+
+                Text(topic.typeLabel)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accentColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(accentColor.opacity(isDarkMode ? 0.18 : 0.10), in: Capsule())
+            }
+            .padding(.vertical, 6)
+        }
+        .listRowBackground(rowBackgroundColor)
+    }
 }
 
 #Preview {
@@ -105,24 +147,36 @@ struct TopicListScreen: View {
     category.icon = "swiftui-icon"
     category.order = 1
 
+    let basics = TopicSectionEntity(context: context)
+    basics.id = "basics"
+    basics.title = "Basics"
+    basics.slug = "basics"
+    basics.order = 1
+    basics.category = category
+
     let topic = TopicEntity(context: context)
     topic.id = "text"
     topic.title = "Text"
+    topic.type = "view"
     topic.slug = "text"
     topic.summary = "Displays read-only text"
     topic.icon = "textformat"
     topic.order = 1
     topic.platformAvailability = "iOS 13+"
     topic.category = category
+    topic.section = basics
     
     let vstack = TopicEntity(context: context)
     vstack.id = "vstack"
     vstack.title = "VStack"
-    vstack.slug = "slug"
+    vstack.type = "view"
+    vstack.slug = "vstack"
     vstack.summary = "A view that arranges its children in a vertical line"
     vstack.icon = "square.stack.3d.up"
+    vstack.order = 2
     vstack.platformAvailability = "iOS 13+"
     vstack.category = category
+    vstack.section = basics
     
 
     try? context.save()
@@ -131,4 +185,21 @@ struct TopicListScreen: View {
         TopicListScreen(category: category)
     }
     .environment(\.managedObjectContext, context)
+}
+
+private extension TopicEntity {
+    var typeLabel: String {
+        switch type {
+        case "propertyWrapper":
+            return "@Wrapper"
+        case "environmentValue":
+            return "Env Value"
+        case "languageFeature":
+            return "Language"
+        case "opaqueType":
+            return "Opaque Type"
+        default:
+            return type.prefix(1).uppercased() + type.dropFirst()
+        }
+    }
 }

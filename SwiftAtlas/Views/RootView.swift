@@ -209,4 +209,5 @@ extension View {
     
     return RootView()
         .environment(\.managedObjectContext, context)
+        .environment(ContentSyncService.shared)
 }

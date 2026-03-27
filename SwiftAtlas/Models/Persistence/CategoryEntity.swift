@@ -16,4 +16,5 @@ final class CategoryEntity: NSManagedObject, Identifiable {
     @NSManaged var slug: String
     @NSManaged var order: Int16
     @NSManaged var topics: Set<TopicEntity>?
+    @NSManaged var sections: Set<TopicSectionEntity>?
 }

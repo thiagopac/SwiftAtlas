@@ -4,6 +4,8 @@ import CoreData
 struct CategoryListScreen: View {
 
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @Environment(\.managedObjectContext) private var context
+    @Environment(ContentSyncService.self) private var contentSync
 
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "order", ascending: true)])
     private var categories: FetchedResults<CategoryEntity>
@@ -19,19 +21,23 @@ struct CategoryListScreen: View {
         ZStack {
             background.ignoresSafeArea()
 
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(categories) { category in
-                        NavigationLink {
-                            TopicListScreen(category: category)
-                        } label: {
-                            CategoryCellView(category: category)
+            if categories.isEmpty {
+                emptyStateView
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(categories) { category in
+                            NavigationLink {
+                                TopicListScreen(category: category)
+                            } label: {
+                                CategoryCellView(category: category)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 20)
                 }
-                .padding(.horizontal, 28)
-                .padding(.vertical, 20)
             }
         }
         .fullScreenCover(isPresented: $showSearch) {
@@ -59,6 +65,92 @@ struct CategoryListScreen: View {
         isDarkMode
             ? Color(red: 0.07, green: 0.07, blue: 0.09)
             : Color(UIColor.systemGroupedBackground)
+    }
+
+    @ViewBuilder
+    private var emptyStateView: some View {
+        switch contentSync.phase {
+        case .failed(let message):
+            VStack(spacing: 18) {
+                Image(systemName: "wifi.exclamationmark")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(.secondary)
+
+                Text(message)
+                    .font(.system(.body, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+
+                Button("Try Again") {
+                    Task {
+                        await contentSync.sync(context: context)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(28)
+            .frame(maxWidth: 360)
+        case .downloading(let progress):
+            VStack(spacing: 18) {
+                Image(systemName: "arrow.down.circle")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(.secondary)
+
+                Text("Downloading content")
+                    .font(.system(.headline, design: .rounded))
+
+                if let progress {
+                    ProgressView(value: progress)
+                        .progressViewStyle(.linear)
+
+                    Text(progress.formatted(.percent.precision(.fractionLength(0))))
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(.secondary)
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
+            }
+            .padding(28)
+            .frame(maxWidth: 360)
+        case .importing:
+            VStack(spacing: 18) {
+                ProgressView()
+                    .progressViewStyle(.circular)
+
+                Text("Importing content")
+                    .font(.system(.headline, design: .rounded))
+
+                Text("Preparing the local catalog.")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(28)
+            .frame(maxWidth: 360)
+        case .checking, .idle:
+            VStack(spacing: 18) {
+                Image(systemName: "square.and.arrow.down")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(.secondary)
+
+                Text("Download catalog")
+                    .font(.system(.headline, design: .rounded))
+
+                Text("On the first launch, the app needs to fetch the content before it can build the local catalog.")
+                    .font(.system(.body, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+
+                Button("Download Now") {
+                    Task {
+                        await contentSync.sync(context: context)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(28)
+            .frame(maxWidth: 360)
+        }
     }
 }
 
@@ -145,5 +237,6 @@ struct CategoryCellView: View {
     return NavigationStack {
         CategoryListScreen()
             .environment(\.managedObjectContext, context)
+            .environment(ContentSyncService.shared)
     }
 }

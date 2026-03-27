@@ -6,6 +6,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="slug" attributeType="String"/>
+        <relationship name="sections" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TopicSectionEntity" inverseName="category" inverseEntity="TopicSectionEntity"/>
         <relationship name="topics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TopicEntity" inverseName="category" inverseEntity="TopicEntity"/>
         <fetchIndex name="idIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -48,9 +49,25 @@
         <attribute name="slug" attributeType="String"/>
         <attribute name="summary" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
         <relationship name="blocks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ContentBlockEntity" inverseName="topic" inverseEntity="ContentBlockEntity"/>
         <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="CategoryEntity" inverseName="topics" inverseEntity="CategoryEntity"/>
         <relationship name="documentationLinks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentationLinkEntity" inverseName="topic" inverseEntity="DocumentationLinkEntity"/>
+        <relationship name="section" maxCount="1" deletionRule="Nullify" destinationEntity="TopicSectionEntity" inverseName="topics" inverseEntity="TopicSectionEntity"/>
+        <fetchIndex name="idIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="orderIndex">
+            <fetchIndexElement property="order" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TopicSectionEntity" representedClassName=".TopicSectionEntity" syncable="YES">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="order" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="slug" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="CategoryEntity" inverseName="sections" inverseEntity="CategoryEntity"/>
+        <relationship name="topics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TopicEntity" inverseName="section" inverseEntity="TopicEntity"/>
         <fetchIndex name="idIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
